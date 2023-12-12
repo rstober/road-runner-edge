@@ -193,7 +193,7 @@ if __name__ == '__main__':
                     os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} dir_path={dir_path}" create-dir-path-pb.yaml'.format(index=index, dir_path=dirpath))
                 
         index+=1
-        os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index}" grabimage-pb.yaml'.format(index=index))
+        #os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index}" grabimage-pb.yaml'.format(index=index))
             
         concatenateFiles(dictionary["install_dir"] + '/roles/software_images/tmp', 'roles/software_images/tasks/main.yaml')
         cleanTmpDir(dictionary["install_dir"] + '/roles/software_images/tmp')

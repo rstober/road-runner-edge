@@ -1,0 +1,19 @@
+---
+- hosts: all
+  gather_facts: true
+  vars_files:
+    - /root/.road-runner/install_config.yaml
+    
+  tasks:
+  
+    - name: print the variables
+      debug:
+        msg:
+          - "image_backup: {{ image_backup }}"
+          - "image_name: {{ image_name }}"
+    
+    - name: "writing playbook that creates the {{ image_backup }} software image by cloning the {{ clone_from }} software image"
+      ansible.builtin.template:
+        src: "{{ ansible_local['custom']['install_dir'] }}/templates/create-software-image.j2"
+        dest: "{{ ansible_local['custom']['install_dir'] }}/roles/software_images/tmp/software-image-{{ index }}.yaml"
+        mode: "0644"

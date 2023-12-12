@@ -1,0 +1,15 @@
+---
+- hosts: all
+  gather_facts: true
+  vars_files:
+    - /root/.road-runner/install_config.yaml
+    
+  tasks:
+        
+    - name: "Write playbook that runs apt upgrade on node01"
+      ansible.builtin.template:
+        src: "{{ ansible_local['custom']['install_dir'] }}/templates/update-software-image.j2"
+        dest: "{{ ansible_local['custom']['install_dir'] }}/roles/apt_upgrade_node/tmp/apt-upgrade-node-{{ index }}.yaml"
+        mode: "0644"
+        
+    
