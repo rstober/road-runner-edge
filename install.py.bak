@@ -168,7 +168,7 @@ if __name__ == '__main__':
 
             initrd_file = '/cm/images/' + image["name"] + '/boot/initrd-' + image["kernel_release"]
             
-            os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} image_name={image_name} clone_from={clone_from} image_path={image_path} kernel_release={kernel_release} image_backup={image_backup}" create-software-image-pb.yaml'.format(index=index, image_name=image["name"], clone_from=image["clone_from"],image_path=image["path"], kernel_release=image["kernel_release"], image_backup=image["backup"]))
+            os.system('ansible-playbook -ilocalhost, -v --extra-vars "image_name={image_name} clone_from={clone_from} image_path={image_path} kernel_release={kernel_release} image_backup={image_backup}" create-software-image-pb.yaml'.format(image_name=image["name"], clone_from=image["clone_from"],image_path=image["path"], kernel_release=image["kernel_release"], image_backup=image["backup"]))
             
         concatenateFiles(dictionary["install_dir"] + '/roles/software_images/tmp', 'roles/software_images/tasks/main.yaml')
         #cleanTmpDir(dictionary["install_dir"] + '/roles/software_images/tmp')  

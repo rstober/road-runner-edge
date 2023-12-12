@@ -174,16 +174,12 @@ if __name__ == '__main__':
         #cleanTmpDir(dictionary["install_dir"] + '/roles/software_images/tmp')  
         
     if "categories" in dictionary:
-    
-        index=0
         
         shutil.copyfile("bright-ansible-vars", install_dir + "/roles/categories/vars/main.yaml")
     
         for category in dictionary["categories"]:
-        
-            index+=1
             
-            os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} category_name={name} clone_from={clone_from} software_image={software_image}" create-category-pb.yaml'.format(index=index, name=category["name"], clone_from=category["clone_from"], software_image=category["software_image"]))
+            os.system('ansible-playbook -ilocalhost, -v --extra-vars "category_name={name} clone_from={clone_from} software_image={software_image}" create-category-pb.yaml'.format(name=category["name"], clone_from=category["clone_from"], software_image=category["software_image"]))
             
         concatenateFiles(dictionary["install_dir"] + '/roles/categories/tmp', 'roles/categories/tasks/main.yaml')
         #cleanTmpDir(dictionary["install_dir"] + '/roles/categories/tmp') 
