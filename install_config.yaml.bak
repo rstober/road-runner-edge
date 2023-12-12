@@ -50,34 +50,7 @@ software_images:
     modules:
     packages:
     create_root_dirs:
-  - name: dgx-os-5.4-a100-image
-    backup: dgx-os-5.4-a100-image-orig
-    clone_from: dgx-os-5.4-a100-image
-    path: /cm/images/dgx-os-5.4-a100-image-orig
-    kernel_release: 5.4.0-124-generic
-    modules: 
-      - name: bonding
-        parameters: ''
-      - name: raid0
-        parameters: ''
-      - name: raid1
-        parameters: ''
-      - name: mlx5_core
-        parameters: ''
-    packages: ['ifenslave']
-    create_root_dirs: ['/raid']
-  - name: k8s-master-image
-    backup: k8s-master-image
-    clone_from: default-image
-    path: /cm/images/k8s-master-image
-    kernel_release: 5.15.0-50-generic
-    modules:
-      - name: bonding
-        parameters: ''
-      - name: mlx5_core
-        parameters: ''
-    packages: ['ifenslave']
-    create_root_dirs:
+
         
 categories:
   - name: dgx

@@ -137,7 +137,7 @@ if __name__ == '__main__':
     # install ansible base
     os.system('pip install ansible==' + dictionary["ansible_version"])
     
-    # install the brightcomputing.bcm92 Ansible collection
+    # install the brightcomputing.bcm100 Ansible collection
     os.system("ansible-galaxy collection install brightcomputing.bcm100")
    
     # copy the CMSH aliases, bookmarks and scriptlets to their proper locations
@@ -196,7 +196,7 @@ if __name__ == '__main__':
         #os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index}" grabimage-pb.yaml'.format(index=index))
             
         concatenateFiles(dictionary["install_dir"] + '/roles/software_images/tmp', 'roles/software_images/tasks/main.yaml')
-        cleanTmpDir(dictionary["install_dir"] + '/roles/software_images/tmp')
+        #cleanTmpDir(dictionary["install_dir"] + '/roles/software_images/tmp')
         
         index=1
         

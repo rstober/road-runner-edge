@@ -42,11 +42,11 @@ networks:
     management: no
 
 software_images:
-  - name: default-image
-    backup: default-image-orig
+  - name: cloned-image
+    backup: cloned-image
     clone_from: default-image
-    path: /cm/images/default-image-orig
-    kernel_release: 5.15.0-50-generic
+    path: /cm/images/cloned-image
+    kernel_release: 5.19.0-45-generic
     modules:
     packages:
     create_root_dirs:
