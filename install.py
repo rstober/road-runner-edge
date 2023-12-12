@@ -158,9 +158,7 @@ if __name__ == '__main__':
     shutil.copyfile('hosts', '/etc/ansible/hosts')
     shutil.copyfile('ansible.cfg', '/root/.ansible.cfg')
     
-    printBanner('Preparing playbooks')
-    
-    sys.exit("Test exit")   
+    printBanner('Preparing playbooks')   
         
     if "software_images" in dictionary:
 
@@ -168,6 +166,8 @@ if __name__ == '__main__':
         
         shutil.copyfile("bright-ansible-vars", install_dir + "/roles/software_images/vars/main.yaml")
         shutil.copyfile("default-ansible-vars", install_dir + "/roles/apt_upgrade_node/vars/main.yaml")
+        
+         sys.exit("Testing ansible vars")
     
         for image in dictionary["software_images"]:
         
