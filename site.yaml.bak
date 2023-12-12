@@ -1,0 +1,17 @@
+---
+- hosts: update-nodes
+  roles:
+    - updates
+
+- hosts: localhost
+  roles:
+    - license
+    - networks
+    - software_images
+    - categories
+    - nodes
+    - power
+    - users
+    # - kubernetes
+    # - jupyter
+    

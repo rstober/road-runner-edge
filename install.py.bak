@@ -137,7 +137,7 @@ if __name__ == '__main__':
     # install ansible base
     os.system('pip install ansible==' + dictionary["ansible_version"])
     
-    # install the brightcomputing.bcm92 Ansible collection
+    # install the brightcomputing.bcm100 Ansible collection
     os.system("ansible-galaxy collection install brightcomputing.bcm100")
    
     # copy the CMSH aliases, bookmarks and scriptlets to their proper locations
@@ -167,45 +167,12 @@ if __name__ == '__main__':
             initrd_file = '/cm/images/' + image["name"] + '/boot/initrd-' + image["kernel_release"]
             index+=1
             
-            os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} image_name={image_name} clone_from={clone_from} image_path={image_path} kernel_release={kernel_release} image_backup={image_backup}" create-software-image-pb.yaml'.format(index=index, image_name=image["name"], clone_from=image["clone_from"], image_path=image["path"], kernel_release=image["kernel_release"], image_backup=image["backup"]))
-            
-            # skip adding kernel modules if there are none to add
-            if image["modules"] is not None:
-            
-                for module in image["modules"]:
-                    print(module)
-                    index+=1
-                    os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} image_name={image_name} module_name={module_name}" configure-software-image-pb.yaml'.format(index=index, image_name=image["name"], module_name=module))
-            
-            # skip installing packages if there are none to add
-            if image["packages"] is not None:
-           
-                for package in image["packages"]:
-                    print(package)
-                    index+=1
-                    os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} package_name={package_name}" install-package-pb.yaml'.format(index=index, package_name=package))
-            
-            if image["create_root_dirs"] is not None:
-           
-                for dirpath in image["create_root_dirs"]:
-                    print(dirpath)
-                    index+=1
-                    os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} dir_path={dir_path}" create-dir-path-pb.yaml'.format(index=index, dir_path=dirpath))
+            os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} image_name={image_name} clone_from={clone_from} image_path={image_path} kernel_release={kernel_release} image_backup={image_backup}" create-software-image-pb.yaml'.format(index=index, image_name=image["name"], clone_from=image["clone_from"],image_path=image["path"], kernel_release=image["kernel_release"], image_backup=image["backup"]))
                 
         index+=1
-        #os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index}" grabimage-pb.yaml'.format(index=index))
             
         concatenateFiles(dictionary["install_dir"] + '/roles/software_images/tmp', 'roles/software_images/tasks/main.yaml')
-        cleanTmpDir(dictionary["install_dir"] + '/roles/software_images/tmp')
-        
-        index=1
-        
-        os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index}" update-software-image-pb.yaml'.format(index=index))
-        
-        concatenateFiles(dictionary["install_dir"] + '/roles/apt_upgrade_node/tmp', 'roles/apt_upgrade_node/tasks/main.yaml')
-        #cleanTmpDir(dictionary["install_dir"] + '/roles/apt_upgrade_node/tmp')
-        
-    sys.exit("Exit after software image")   
+        #cleanTmpDir(dictionary["install_dir"] + '/roles/software_images/tmp')  
         
     if "categories" in dictionary:
     
@@ -219,13 +186,10 @@ if __name__ == '__main__':
             
             os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} category_name={name} clone_from={clone_from} software_image={software_image}" create-category-pb.yaml'.format(index=index, name=category["name"], clone_from=category["clone_from"], software_image=category["software_image"]))
             
-            if category["disksetup"] is not None:
-            
-                index+=1
-                os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index} category_name={category_name} disk_setup={disk_setup}" configure-disk-setup-pb.yaml'.format(index=index, category_name=category["name"], disk_setup=category["disksetup"]))     
-            
         concatenateFiles(dictionary["install_dir"] + '/roles/categories/tmp', 'roles/categories/tasks/main.yaml')
-        cleanTmpDir(dictionary["install_dir"] + '/roles/categories/tmp')
+        #cleanTmpDir(dictionary["install_dir"] + '/roles/categories/tmp')
+        
+    sys.exit("Exit after category") 
             
     if "nodes" in dictionary:
     

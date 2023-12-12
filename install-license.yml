@@ -1,0 +1,17 @@
+---
+- hosts: all
+  gather_facts: true
+ 
+  tasks:
+      
+    - name: Touch {{ ansible_local['custom']['install_dir'] }}/roles/license/tasks/main.yml
+      ansible.builtin.file:
+        path: "{{ ansible_local['custom']['install_dir'] }}/roles/license/tasks/main.yml"
+        state: touch
+      
+    - name: Write playbook {{ ansible_local['custom']['install_dir'] }}/roles/license/tasks/main.yml
+      ansible.builtin.blockinfile:
+        insertafter: EOF
+        path: "{{ ansible_local['custom']['install_dir'] }}/roles/license/tasks/main.yml" 
+        block: "{{ lookup('template', 'templates/install-license.j2') }}"
+        marker: ""

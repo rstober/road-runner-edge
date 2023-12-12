@@ -1,0 +1,7 @@
+---
+
+- hosts: localhost
+  roles:
+    - license
+    - software_images
+    - categories
