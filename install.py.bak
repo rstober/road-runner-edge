@@ -159,8 +159,6 @@ if __name__ == '__main__':
     shutil.copyfile('ansible.cfg', '/root/.ansible.cfg')
     
     printBanner('Preparing playbooks')
-    
-    sys.exit("Test exit")   
         
     if "software_images" in dictionary:
 
