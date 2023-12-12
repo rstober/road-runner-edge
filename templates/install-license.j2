@@ -1,0 +1,25 @@
+    
+  - name: Install NVIDIA Bright Cluster Manager license
+    shell: >
+      /cm/local/apps/cmd/sbin/request-license
+      -n 
+      -k {{ ansible_local['custom']['license']['productkey'] }} 
+      -c {{ ansible_local['custom']['license']['country'] }} 
+      -s {{ ansible_local['custom']['license']['state'] }} 
+      -l {{ ansible_local['custom']['license']['locality'] }} 
+      -o {{ ansible_local['custom']['license']['organization'] }} 
+      -ou {{ ansible_local['custom']['license']['department'] }} 
+      -cn {{ ansible_local['custom']['license']['clustername'] }} 
+      -f
+      -m {{ ansible_local['custom']['license']['primaryheadnodemac'] }}
+      -M  {{ ansible_local['custom']['license']['secondaryheadnodemac'] }}
+    args:
+      executable: /bin/bash
+    register: request_license_output
+    ignore_errors: true
+    
+  - name: "Add DeviceResolveAnyMAC advanced configuration parameter to /cm/local/apps/cmd/etc/cmd.conf"
+    ansible.builtin.lineinfile:
+      path: /cm/local/apps/cmd/etc/cmd.conf
+      regexp: '^# AdvancedConfig'
+      line: 'AdvancedConfig = { "DeviceResolveAnyMAC=1" }'

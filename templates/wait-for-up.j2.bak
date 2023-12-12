@@ -1,0 +1,8 @@
+{% if item['updatenode'] %}  
+- name: Wait for node {{ item['hostname'] }} to be UP
+  ansible.builtin.shell: cmsh -c "device status {{ item['hostname'] }}"
+  register: result
+  until: result.stdout.find("UP") != -1
+  retries: 20
+  delay: 60
+{% endif %}

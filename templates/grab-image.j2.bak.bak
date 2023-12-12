@@ -1,0 +1,39 @@
+
+- name: register all physical_nodes
+  register: all_nodes
+  brightcomputing.bcm92.physical_node_info: {}
+  
+{% for node in ansible_local['custom']['nodes'] %}
+{% if node['hostname'] | regex_search('01$') %}
+- name: Display node details
+  debug:
+    msg: 
+    - "hostname: {{ node['hostname'] }}"
+
+{% endif %}
+{% endfor %}
+
+#- name: Display node details
+#  debug:
+#    msg:
+#    - "hostname: {{ item.hostname }}"
+#    - "category: {{ item.category.name }}"
+#    - "software image: {{ item.category.softwareImageProxy.parentSoftwareImage.name }}"
+#  loop: '{{ all_nodes.physical_nodes }}'
+#  loop_control:
+#    label: '{{ item.hostname }}'
+  
+#- name: Grab image from {{ item['hostname'] }} to {{ item['softwareimage'] }}
+#  ansible.builtin.shell: 'cmsh -c "device use {{ item['hostname'] }}; grabimage -i {{ item['softwareimage'] }} -w --wait"'
+#  args:
+#    executable: /bin/bash
+#  register: grab_image_output
+#  until: "'Provisioning completed' in grab_image_output.stdout"
+#  failed_when: "'FAILED' in grab_image_output.stdout"
+#  retries: 6
+#  delay: 10
+#  ignore_errors: true
+
+#- name: print grab image result
+#  debug:
+#    msg: "{{ grab_image_output.stdout_lines | default('default') }}"

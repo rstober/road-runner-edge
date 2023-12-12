@@ -1,0 +1,12 @@
+# config software images
+{% for image in ansible_local['custom']['software_images'] %}
+{% for im in images_need_modules %}
+{% if image.modules is not none and im.name == image.name %}
+- name: Add kernel modules to software image {{ image.name }}
+  brightcomputing.bcm92.software_image:
+    name: {{ im.name }}
+    modules: {{ im.modules + image.modules }}
+      
+{% endif %}
+{% endfor %}
+{% endfor %}

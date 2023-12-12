@@ -1,0 +1,52 @@
+
+- name: Check if /var/spool/cmd/ramdisk/image-{{ item['backup'] }}.log exists
+  ansible.builtin.stat:
+    path: /var/spool/cmd/ramdisk/image-{{ item['backup'] }}.log
+  register: check_file_name
+    
+- name: Backup /var/spool/cmd/ramdisk/image-{{ item['backup'] }}.log to /var/spool/cmd/ramdisk/image-{{ item['backup'] }}.log.sav
+  ansible.builtin.copy:
+    src: /var/spool/cmd/ramdisk/image-{{ item['backup'] }}.log
+    dest: /var/spool/cmd/ramdisk/image-{{ item['backup'] }}.log.sav
+  when: check_file_name.stat.exists
+  
+- name: Remove old file
+  ansible.builtin.file:
+    path: /var/spool/cmd/ramdisk/image-{{ item['backup'] }}.log
+    state: absent
+  when: check_file_name.stat.exists
+
+- name: Back up {{ item['clone_from'] }} software image -> {{ item['backup'] }}
+  brightcomputing.bcm92.software_image:
+    name: {{ item['backup'] }}
+    cloneFrom: {{ item['clone_from'] }}
+    path: {{ item['path'] }}
+    
+- name: Wait until ramdisk initrd-{{ item['kernel_release'] }} is generated
+  ansible.builtin.wait_for:
+    path: /var/spool/cmd/ramdisk/image-{{ item['backup'] }}.log
+    search_regex: Done
+
+{% if item['packages'] is not none %}
+- name: Install {{ item['packages'] | join(' ') }} into {{ item['name'] }} software image
+  command:
+    cmd: "chroot /cm/images/{{ item['name'] }} /bin/bash -c 'apt update; apt install -y {{ item['packages'] | join(' ') }}'"
+  register: install_packages_result
+{% endif %}
+
+- name: Find out if 82-net-setup-link.rules file exists
+  ansible.builtin.stat:
+    path: /cm/images/{{ item['name'] }}/lib/udev/rules.d/82-net-setup-link.rules
+  register: check_udev
+
+- name: Back up 82-net-setup-link.rules file 
+  ansible.builtin.copy:
+    src: /cm/images/{{ item['name'] }}/lib/udev/rules.d/82-net-setup-link.rules
+    dest: /root/82-net-setup-link.rules
+  when: check_udev.stat.exists == true
+
+- name: Move aside 82-net-setup-link.rules file
+  ansible.builtin.file:
+    path: /cm/images/{{ item['name'] }}/lib/udev/rules.d/82-net-setup-link.rules
+    state: absent
+  when: check_udev.stat.exists == true

@@ -1,0 +1,406 @@
+---
+
+install_dir: /root/.road-runner
+tmp_dir: /root/.road-runner/tmp
+update_head_node: no
+update_nodes:
+  - name: dgx01
+    softwareimage: dgx-os-5.4-a100-image
+  - name: knode01
+    softwareimage: k8s-master-image
+ansible_version: 2.10.*
+clone_software_image: yes
+template_node: node01
+template_ip: 10.130.122.250
+template_name: template
+template_nic: bootif
+ipmiuser: apollo
+ipmipass: Buynvidia2021
+
+apps:
+  disabled: yes
+
+license:
+  clustername: 'DGX BasePod'
+  productkey: 128834-679610-302892-882261-962425
+  country: US
+  state: California
+  locality: 'Santa Clara'
+  organization: NVIDIA
+  department: MLOPs
+  primaryheadnodemac: 04:3f:72:d0:96:c3
+  secondaryheadnodemac: 04:3f:72:e7:67:07
+
+networks:
+  - name: ibnet
+    clone_from: internalnet
+    domainname: ibnet.cluster.local
+    baseaddress: 10.149.0.0
+    broadcastaddress: 10.149.255.255
+    netmaskbits: 16
+    mtu: 9000
+    management: no
+
+software_images:
+  - name: default-image
+    backup: default-image-orig
+    clone_from: default-image
+    path: /cm/images/default-image-orig
+    kernel_release: 5.15.0-50-generic
+    modules:
+    packages:
+    create_root_dirs:
+  - name: dgx-os-5.4-a100-image
+    backup: dgx-os-5.4-a100-image-orig
+    clone_from: dgx-os-5.4-a100-image
+    path: /cm/images/dgx-os-5.4-a100-image-orig
+    kernel_release: 5.4.0-124-generic
+    modules: 
+      - name: bonding
+        parameters: ''
+      - name: raid0
+        parameters: ''
+      - name: raid1
+        parameters: ''
+      - name: mlx5_core
+        parameters: ''
+    packages: ['ifenslave']
+    create_root_dirs: ['/raid']
+  - name: k8s-master-image
+    backup: k8s-master-image
+    clone_from: default-image
+    path: /cm/images/k8s-master-image
+    kernel_release: 5.15.0-50-generic
+    modules:
+      - name: bonding
+        parameters: ''
+      - name: mlx5_core
+        parameters: ''
+    packages: ['ifenslave']
+    create_root_dirs:
+        
+categories:
+  - name: dgx
+    clone_from: default
+    software_image: dgx-os-5.4-a100-image
+    disksetup: dgxa100-disksetup.xml
+  - name: k8s-master
+    clone_from: default
+    software_image: k8s-master-image
+    disksetup: k8s-one-big-partition.xml
+    
+nodes:
+  - hostname: dgx01
+    category: dgx
+    clone_from: node01
+    provisioninginterface: bond0
+    provisioningmac: 0c:42:a1:0a:33:4b
+    powercontrol: ipmi0
+    updatenode: true
+    softwareimage: dgx-os-5.4-a100-image
+    nics:
+      - device: bootif
+        ip: 10.130.122.16
+        network: internalnet
+      - device: ipmi0
+        ip: 10.130.111.71
+        network: ipminet
+      - device: enp225s0f1
+      - device: enp97s0f1
+      - device: enp225s0f1np1
+      - device: enp97s0f1np1
+      - device: bond0
+        interfaces: ['enp225s0f1','enp97s0f1','enp225s0f1np1','enp97s0f1np1']
+        ip: 10.130.122.16
+        network: internalnet
+        options: miimon=100
+        mode: 4
+      - device: ibp186s0
+        ip: 10.149.0.16
+        network: ibnet
+      - device: ibp12s0
+        ip: 10.149.1.16
+        network: ibnet
+      - device: ibp75s0
+        ip: 10.149.2.16
+        network: ibnet
+      - device: ibp141s0
+        ip: 10.149.3.16
+        network: ibnet
+  # - hostname: dgx02
+    # category: dgx
+    # clone_from: node01
+    # provisioninginterface: bond0
+    # provisioningmac: 
+    # powercontrol: ipmi0
+    # updatenode: false
+    # softwareimage: dgx-os-5.4-a100-image
+    # nics:
+      # - device: bootif
+        # ip: 10.130.122.17
+        # network: internalnet
+      # - device: ipmi0
+        # ip: 10.130.111.69
+        # network: ipminet
+      # - device: enp225s0f1
+      # - device: enp97s0f1
+      # - device: bond0
+        # interfaces: ['enp225s0f1','enp97s0f1']
+        # ip: 10.130.122.17
+        # network: internalnet
+        # options: miimon=100
+        # mode: 4
+      # - device: ibp186s0
+        # ip: 10.149.0.17
+        # network: ibnet
+      # - device: ibp12s0
+        # ip: 10.149.1.17
+        # network: ibnet
+      # - device: ibp75s0
+        # ip: 10.149.2.17
+        # network: ibnet
+      # - device: ibp141s0
+        # ip: 10.149.3.17
+        # network: ibnet
+  # - hostname: dgx03
+    # category: dgx
+    # clone_from: node01
+    # provisioninginterface: bond0
+    # provisioningmac: 
+    # powercontrol: ipmi0
+    # updatenode: false
+    # softwareimage: dgx-os-5.4-a100-image
+    # nics:
+      # - device: bootif
+        # ip: 10.130.122.18
+        # network: internalnet
+      # - device: ipmi0
+        # ip: 10.130.111.70
+        # network: ipminet
+      # - device: enp225s0f1
+      # - device: enp97s0f1
+      # - device: bond0
+        # interfaces: ['enp225s0f1','enp97s0f1']
+        # ip: 10.130.122.18
+        # network: internalnet
+        # options: miimon=100
+        # mode: 4
+      # - device: ibp186s0
+        # ip: 10.149.0.18
+        # network: ibnet
+      # - device: ibp12s0
+        # ip: 10.149.1.18
+        # network: ibnet
+      # - device: ibp75s0
+        # ip: 10.149.2.18
+        # network: ibnet
+      # - device: ibp141s0
+        # ip: 10.149.3.18
+        # network: ibnet
+  # - hostname: dgx04
+    # category: dgx
+    # clone_from: node01
+    # provisioninginterface: bond0
+    # provisioningmac: 
+    # powercontrol: ipmi0
+    # updatenode: false
+    # softwareimage: dgx-os-5.4-a100-image
+    # nics:
+      # - device: bootif
+        # ip: 10.130.122.19
+        # network: internalnet
+      # - device: ipmi0
+        # ip: 10.130.111.68
+        # network: ipminet
+      # - device: enp225s0f1
+      # - device: enp97s0f1
+      # - device: bond0
+        # interfaces: ['enp225s0f1','enp97s0f1']
+        # ip: 10.130.122.19
+        # network: internalnet
+        # options: miimon=100
+        # mode: 4
+      # - device: ibp186s0
+        # ip: 10.149.0.19
+        # network: ibnet
+      # - device: ibp12s0
+        # ip: 10.149.1.19
+        # network: ibnet
+      # - device: ibp75s0
+        # ip: 10.149.2.19
+        # network: ibnet
+      # - device: ibp141s0
+        # ip: 10.149.3.19
+        # network: ibnet
+  - hostname: knode01
+    category: k8s-master
+    clone_from: node01
+    provisioninginterface: bond0
+    provisioningmac: 04:3f:72:e7:64:97
+    powercontrol: ipmi0
+    updatenode: true
+    softwareimage: k8s-master-image
+    nics:
+      - device: bootif
+        ip: 10.130.122.20
+        network: internalnet
+      - device: ipmi0
+        ip: 10.130.111.72
+        network: ipminet
+      - device: ens1f1np1
+      - device: ens2f1np1
+      - device: bond0
+        interfaces: ['ens1f1np1','ens2f1np1']
+        ip: 10.130.122.20
+        network: internalnet
+        options: miimon=100
+        mode: 4
+  - hostname: knode02
+    category: k8s-master
+    clone_from: node01
+    provisioninginterface: bond0
+    provisioningmac: 04:3f:72:d3:fc:eb
+    powercontrol: ipmi0
+    updatenode: false
+    softwareimage: k8s-master-image
+    nics:
+      - device: bootif
+        ip: 10.130.122.21
+        network: internalnet
+      - device: ipmi0
+        ip: 10.130.111.73
+        network: ipminet
+      - device: ens1f1np1
+      - device: ens2f1np1
+      - device: bond0
+        interfaces: ['ens1f1np1','ens2f1np1']
+        ip: 10.130.122.21
+        network: internalnet
+        options: miimon=100
+        mode: 4
+  - hostname: knode03
+    category: k8s-master
+    clone_from: node01
+    provisioninginterface: bond0
+    provisioningmac: 04:3f:72:d3:fc:db
+    powercontrol: ipmi0
+    updatenode: false
+    softwareimage: k8s-master-image
+    nics:
+      - device: bootif
+        ip: 10.130.122.22
+        network: internalnet
+      - device: ipmi0
+        ip: 10.130.111.74
+        network: ipminet
+      - device: ens1f1np1
+      - device: ens2f1np1
+      - device: bond0
+        interfaces: ['ens1f1np1','ens2f1np1']
+        ip: 10.130.122.22
+        network: internalnet
+        options: miimon=100
+        mode: 4
+    
+csps:
+  - name: amazon
+    type: aws
+    useMarketplaceAMIs: AS_NEEDED
+    
+users:
+  - rstober
+  - yangya
+    
+wlms:
+  - name: slurm
+    constrain_devices: yes
+    queues:
+      - queue_name: gpu
+        clone_from: defq
+        default_queue: false
+        over_subscribe: yes:4
+        wlm_cluster: slurm
+      - queue_name: jup
+        clone_from: defq
+        default_queue: false
+        over_subscribe: yes:4
+        wlm_cluster: slurm
+    configuration_overlays:
+      - name: slurm-client
+        categories: ['cloned']
+        allHeadNodes: false
+        roles:
+          - name: slurmclient
+            wlm_cluster: slurm
+            queues: ['gpu']
+            sockets_per_board: 1
+            cores_per_socket: 2
+            threads_per_core: 2
+            slots: 4
+            real_memory: 15535
+            generic_resources:
+              - name: gpu
+                alias: gpu0
+                file: /dev/nvidia0
+                type: t4
+                count: 1
+                consumable: true
+                add_to_gres_config: true
+      - name: slurm-jupyter
+        categories: ['jup']
+        allHeadNodes: false
+        roles:
+          - name: slurmclient
+            wlm_cluster: slurm
+            queues: ['jup']
+            sockets_per_board: 1
+            cores_per_socket: 2
+            threads_per_core: 2
+            slots: 4
+            real_memory: 15535
+            generic_resources:
+              - name: gpu
+                alias: gpu0
+                file: /dev/nvidia0
+                type: t4
+                count: 1
+                consumable: true
+                add_to_gres_config: true
+
+autoscaler:
+    name: auto-scaler
+    categories: []
+    allHeadNodes: true
+    roles:
+      - name: scaleserver
+        runInterval: 60
+        debug: true
+        index: 0        
+        resource_providers:
+          - provider_name: aws
+            type: ScaleDynamicNodesProvider
+            templateNode: node02
+            startTemplateNode: false
+            stopTemplateNode: false
+            nodeRange: node02..node04
+            networkInterface: BOOTIF
+            defaultResources: "['cpus=4','mem_free:slurm=16GB','gpu_free:t4:slurm=1']"
+        engines:
+          - name: slurm
+            type: ScaleHpcEngine
+            workloadsPerNode: 4
+            priority: 10
+            wlmCluster: slurm
+            trackers:
+              - name: gpu
+                type: ScaleHpcQueueTracker
+                queue: gpu
+                assignCategory: cloned
+                allowedResourceProviders: ['aws']
+                workloadsPerNode: 4
+ 
+jupyter:
+    server: jupyter
+    wlm_queues: ['jup']
+    wlm_categories: jup
+    wlm_nodes:

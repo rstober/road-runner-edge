@@ -1,0 +1,11 @@
+    
+  - name: grabimage from node01 to k8s-image
+    ansible.builtin.shell: 'cmsh -c "device use node01; grabimage -i k8s-image -w --wait"'
+    args:
+      executable: /bin/bash
+    register: cmsh_output
+    until: "'Provisioning completed' in cmsh_output.stdout"
+    failed_when: "'FAILED' in cmsh_output.stdout"
+    retries: 6
+    delay: 10
+    ignore_errors: true

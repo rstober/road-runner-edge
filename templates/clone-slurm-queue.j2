@@ -1,0 +1,8 @@
+    
+    - name: creating {{wlm_cluster }} queue {{ queue_name }} from {{ clone_from }}
+      brightcomputing.bcm92.slurm_job_queue:
+        name: {{ queue_name }}
+        cloneFrom: {{ clone_from }}
+        defaultQueue: {{ default_queue }}
+        overSubscribe: {{ over_subscribe }}
+        wlmCluster: {{ wlm_cluster }}

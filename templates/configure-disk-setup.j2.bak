@@ -1,0 +1,13 @@
+
+- name: Copy disk setup {{ disk_setup }} to /cm/local/apps/cmd/etc/htdocs/{{ disk_setup }}
+  ansible.builtin.copy:
+    src: {{ disk_setup }}
+    dest: "/cm/local/apps/cmd/etc/htdocs/{{ disk_setup }}"
+    owner: root
+    group: root
+    mode: '0644'
+    
+- name: set {{ category_name }} disksetup /cm/local/apps/cmd/etc/htdocs/{{ disk_setup }}
+  brightcomputing.bcm92.category:
+    name: {{ category_name }}
+    disksetup: "/cm/local/apps/cmd/etc/htdocs/{{ disk_setup }}"

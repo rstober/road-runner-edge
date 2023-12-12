@@ -1,0 +1,10 @@
+        
+  - name: creating the {{ item['name'] }} software image from the {{ item['clone_from'] }} image
+    brightcomputing.bcm92.software_image:
+      name: {{ item['name'] }}
+      cloneFrom: {{ item['clone_from'] }}
+      path: {{ item['path'] }}
+      
+  - name: Wait until initrd is generated
+    wait_for:
+      path: /cm/images/{{ item['name'] }}/boot/initrd-{{ item['kernel_release'] }}

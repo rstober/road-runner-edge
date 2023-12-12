@@ -1,0 +1,11 @@
+ 
+- name: Grab image from {{ node.hostname }} to {{ node.softwareimage }}
+  ansible.builtin.shell: 'cmsh -c "device use {{ node.hostname }}; grabimage -i {{ node.softwareimage }} -w --wait"'
+  args:
+    executable: /bin/bash
+  register: grab_image_output
+  until: "'Provisioning completed' in grab_image_output.stdout"
+  failed_when: "'FAILED' in grab_image_output.stdout"
+  retries: 6
+  delay: 10
+  ignore_errors: true

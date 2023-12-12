@@ -1,0 +1,5 @@
+ 
+- name: Run apt full-upgrade on group update-nodes
+  ansible.builtin.apt:
+    upgrade: full
+    update_cache: yes

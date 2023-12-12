@@ -1,0 +1,6 @@
+                trackers_ScaleHpcQueueTracker:
+                  - name: {{ tracker_name }}
+                    queue: {{ queue }}
+                    assignCategory: {{ assign_category }}
+                    allowedResourceProviders: {{ allowed_resource_providers }}
+                    workloadsPerNode: {{ workloads_per_node | int }}

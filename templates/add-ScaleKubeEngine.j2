@@ -1,0 +1,5 @@
+            engines_ScaleKubeEngine:
+              - name: {{ engine_name }}
+                workloadsPerNode: {{ workloads_per_node | int }}
+                priority: {{ priority | int }}
+                cluster: {{ cluster }}

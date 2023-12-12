@@ -1,0 +1,15 @@
+
+- name: Copy disk setup {{ disk_setup }} to /cm/local/apps/cmd/etc/htdocs/{{ disk_setup }}
+  ansible.builtin.copy:
+    src: "{{ disk_setup }}"
+    dest: "/cm/local/apps/cmd/etc/htdocs/{{ disk_setup }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Set category {{ category_name }} disksetup to /cm/local/apps/cmd/etc/htdocs/{{ disk_setup }}
+  ansible.builtin.shell: 'cmsh -c "category use {{ category_name }}; set disksetup /cm/local/apps/cmd/etc/htdocs/{{ disk_setup }}; commit"'
+  args:
+    executable: /bin/bash
+  register: cmsh_output
+  ignore_errors: true

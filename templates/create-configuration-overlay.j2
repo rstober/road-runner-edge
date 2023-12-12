@@ -1,0 +1,6 @@
+    
+    - name: creating the {{ overlay_name }} configuration overlay
+      brightcomputing.bcm92.configuration_overlay:
+        name: {{ overlay_name }}
+        categories: {{ categories }}
+        allHeadNodes: {{ all_head_nodes }}

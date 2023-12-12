@@ -1,0 +1,8 @@
+  
+  - name: Configuring NIC {{ device_name }} of node {{ node_name }}
+      brightcomputing.bcm92.physical_node:
+        hostname: {{ node_name }}
+        interfaces_NetworkPhysicalInterface:
+        - name: {{ device_name }}
+          ip: {{ ip_number }}
+          network: {{ network }}

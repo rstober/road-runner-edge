@@ -1,0 +1,6 @@
+
+    - name: configuring {{ wlm_name }} workload management cluster
+      brightcomputing.bcm92.slurm_wlm_cluster:
+        name: {{ wlm_name }}
+        cgroups:
+          constrainDevices: true

@@ -1,0 +1,108 @@
+        
+- name: clone node {{ item['clone_from'] }} -> {{ item['hostname'] }}
+  brightcomputing.bcm92.physical_node:
+    hostname: {{ item['hostname'] }}
+    cloneFrom: {{ item['clone_from'] }}
+    category: {{ item['category'] }}
+    
+- name: Configuring NICs of node {{ item['hostname'] }}
+  brightcomputing.bcm92.physical_node:
+    hostname: {{ item['hostname'] }}
+    interfaces_NetworkPhysicalInterface:
+{% for nic in item['nics'] %}
+{% if nic['device'].startswith('bootif') %}
+    - name: {{ nic['device'] | upper }}
+      ip: {{ nic['ip'] }}
+      network: {{ nic['network'] }}
+{% elif nic['device'].startswith('enp') %}
+{% if nic['ip'] is defined %}
+    - name: {{ nic['device'] }}
+      ip: {{ nic['ip'] }}
+      network: {{ nic['network'] }}
+{% else %}
+    - name: {{ nic['device'] }}
+{% endif %}
+{% elif nic['device'].startswith('ens') %}
+{% if nic['ip'] is defined %}
+    - name: {{ nic['device'] }}
+      ip: {{ nic['ip'] }}
+      network: {{ nic['network'] }}
+{% else %}
+    - name: {{ nic['device'] }}
+{% endif %}
+{% elif nic['device'].startswith('ibp') %}
+{% if nic['ip'] is defined %}
+    - name: {{ nic['device'] }}
+      ip: {{ nic['ip'] }}
+      network: {{ nic['network'] }}
+{% else %}
+    - name: {{ nic['device'] }}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+- name: Configuring bond interface of node {{ item['hostname'] }}
+  brightcomputing.bcm92.physical_node:
+    hostname: {{ item['hostname'] }}
+    interfaces_NetworkBondInterface:
+{% for nic in item['nics'] %}
+{% if nic['device'].startswith('bond') %}
+    - name: {{ nic['device'] }}
+      ip: {{ nic['ip'] }}
+      network: {{ nic['network'] }}
+      interfaces: {{ nic['interfaces'] }}
+      mode: {{ nic['mode'] }}
+      options: {{ nic['options'] }}
+{% endif %}
+{% endfor %}
+
+- name: Configuring BMC interface of node {{ item['hostname'] }}
+  brightcomputing.bcm92.physical_node:
+    hostname: {{ item['hostname'] }}
+    interfaces_NetworkBmcInterface:
+{% for nic in item['nics'] %}
+{% if nic['device'].startswith('ipmi') %}
+    - name: {{ nic['device'] }}
+      ip: {{ nic['ip'] }}
+      network: {{ nic['network'] }}
+{% endif %}
+{% endfor %}
+
+- name: Set provisioning interface of node {{ item['hostname'] }} to {{ item['provisioninginterface'] }}
+  brightcomputing.bcm92.physical_node:
+    hostname: {{ item['hostname'] }}
+    provisioningInterface: {{ item['provisioninginterface'] }}
+    
+- name: Remove bootif interface from node {{ item['hostname'] }} 
+  command:
+    cmd: "cmsh -c 'device use {{ item['hostname'] }}; interfaces; remove bootif; commit'"
+  register: remove_bootif_result
+  
+- name: print remove_bootif_result
+  debug:
+    msg: "{{ remove_bootif_result.stdout_lines }}"
+    
+- name: Set MAC address of node {{ item['hostname'] }} to {{ item['provisioningmac'] }}
+  brightcomputing.bcm92.physical_node:
+    hostname: {{ item['hostname'] }}
+    mac: {{ item['provisioningmac'] }}
+  register: set_mac_result
+  
+- name: print set_mac_result
+  debug:
+    msg: "{{ set_mac_result.stdout_lines }}"
+    
+#- name: Set MAC address of node {{ item['hostname'] }} to {{ item['provisioningmac'] }}
+#  command:
+#    cmd: "cmsh -c 'device use {{ item['hostname'] }}; set mac {{ item['provisioningmac'] }}; commit'"
+#  register: set_mac_address_result
+    
+- name: Set powercontrol of node {{ item['hostname'] }} to {{ item['powercontrol'] }}
+  brightcomputing.bcm92.physical_node:
+    hostname: {{ item['hostname'] }}
+    powerControl: {{ item['powercontrol'] }}
+  register: set_powercontrol_result
+
+- name: print set_powercontrol_result
+  debug:
+    msg: "{{ set_powercontrol_result.stdout_lines }}"

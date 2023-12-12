@@ -1,0 +1,15 @@
+    
+    - name: Install user applications
+      ansible.builtin.unarchive:
+        src: {{ ansible_local['custom']['install_dir'] }}/jobs.tar.gz
+        dest: /cm/shared
+    
+    # cron job that attempts to subjit jobs every minute, disabled by default
+    - name: Creates a cron file under /etc/cron.d
+      ansible.builtin.cron:
+        name: Attempt to submit jobs every one minute
+        disabled: {{ ansible_local['custom']['apps']['disabled'] }}
+        state: present
+        minute: "*"
+        user: root
+        job: "BASH_ENV=~/.bashrc bash -l -c \"/cm/shared/jobs/submit-load --cron --sjobs 10 >> /var/log/root-cron-submit-load.log 2>&1\""

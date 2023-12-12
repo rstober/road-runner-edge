@@ -1,0 +1,300 @@
+modules:
+  docker:
+    bridge_ip: ''
+    configuration_overlay:
+      categories:
+      - {{ categories }}
+      name: kube-default-worker
+      nodes: []
+    devicemapper:
+      data_size: 100GB
+      device: loopback
+      meta_size: 2GB
+    extra_options: []
+    nvidia_container_runtime: false
+    overlays_priority: 500
+    packages:
+      - cm-docker
+    registry_mirrors: []
+    skip_image_update: false
+    skip_packages: false
+    skip_reboot: false
+    storage_backend: devicemapper
+  kubernetes:
+    apiserver:
+      admission_controllers:
+        - NamespaceLifecycle
+        - LimitRanger
+        - ServiceAccount
+        - DefaultStorageClass
+        - DefaultTolerationSeconds
+        - MutatingAdmissionWebhook
+        - ValidatingAdmissionWebhook
+        - ResourceQuota
+      options:
+        - '--anonymous-auth=false'
+        - '--feature-gates=RunAsGroup=true'
+      port: 6443
+    apiserver_proxy:
+      port: 10443
+    bootstrap:
+      enable: true
+      group: system
+      template_file: addons/bootstrap.yaml
+    ca_certs:
+      etcd:
+        key: /cm/local/apps/etcd/var/etc/etcdca-kube-default.key
+        pem: /cm/local/apps/etcd/var/etc/etcdca-kube-default.pem
+      kube:
+        key: /cm/local/apps/kubernetes/var/etc/kubeca-default.key
+        pem: /cm/local/apps/kubernetes/var/etc/kubeca-default.pem
+      sa:
+        key: /cm/local/apps/kubernetes/var/etc/sa-default.key
+        pem: /cm/local/apps/kubernetes/var/etc/sa-default.pem
+    calico:
+      excludes:
+        - /etc/cni
+        - /opt/cni
+        - /run/calico
+        - /var/lib/calico
+      group: system
+      template_file: addons/calico.yaml
+    ceph:
+      class_name: bright-ceph
+      enable: false
+      pool:
+        min_size: 3
+        name: kube-default
+        pg_num: ''
+        size: 3
+    certs:
+      etcdclient:
+        key: /cm/local/apps/etcd/var/etc/client-default.key
+        pem: /cm/local/apps/etcd/var/etc/client-default.pem
+      kube:
+        key: /cm/local/apps/kubernetes/var/etc/node.key
+        pem: /cm/local/apps/kubernetes/var/etc/node.pem
+        trusted_domains:
+          - kubernetes
+          - kubernetes.default
+          - kubernetes.default.svc
+          - master
+          - localhost
+    container_runtime: containerd
+    container_runtime_packages:
+      cm-docker:
+        - cm-docker
+      containerd:
+        - cm-containerd
+      cri-o:
+        - cri-o
+    controller:
+      options: []
+      port: 10252
+    dashboard:
+      enable: true
+      group: system
+      template_file: addons/dashboard.yaml
+    dashboard_ingress:
+      enable: true
+      group: system
+      template_file: addons/dashboard_ingress.yaml
+    default_storage_class: local_path
+    dns:
+      enable: true
+      group: system
+      template_file: addons/dns.yaml
+    etcd:
+      cluster: kube-default
+      configuration_overlay:
+        name: kube-default-etcd
+      nodes:
+        - {{ ansible_hostname }}
+      options: []
+      packages:
+        - cm-etcd
+      spool_dir: /var/lib/etcd
+    flannel:
+      excludes:
+        - /etc/cni/*
+        - /run/flannel/*
+      group: system
+      template_file: addons/flannel.yaml
+    ingress_controller:
+      enable: true
+      env:
+        CM_KUBE_INGRESS_HTTPS_PORT:
+          nodes_env: true
+          value: '30443'
+        CM_KUBE_INGRESS_HTTP_PORT:
+          nodes_env: true
+          value: '30080'
+        ingress_controller_label:
+          value: brightcomputing.com/ingress-controller
+        replicas:
+          value: '1'
+      group: system
+      nodes: []
+      template_file: addons/ingress_controller.yaml
+    kc:
+      domain: cluster.local
+      edge_site: ''
+      external_api_access: true
+      external_fqdn: k8s-demo
+      name: default
+      network_plugin: calico
+      version: '1.21'
+    kubeconfig:
+      path: /cm/local/apps/kubernetes/var/etc/node.kubeconfig
+      path_client: /cm/local/apps/kubernetes/var/etc/kubelet.kubeconfig
+      template: templates/kubelet.kubeconfig
+    kubernetes_ingress:
+      enable: false
+      group: system
+      template_file: addons/kubernetes_ingress.yaml
+    kubestatemetrics:
+      enable: true
+      group: system
+      template_file: addons/kubestatemetrics.yaml
+    local_path:
+      custom_image: ''
+      enable: true
+      path: /cm/shared/apps/kubernetes
+      registry_address: ''
+    master:
+      configuration_overlay:
+        name: kube-default-master
+        priority: 510
+      label: node-role.kubernetes.io/master
+      nodes:
+        - {{ ansible_hostname }}
+      packages:
+        - cm-kubernetes-permissions-manager
+        - cm-kubernetes-local-path-provisioner
+        - cm-kubernetes-ceph-storage-class
+        - nginx
+      platform_specific_packages:
+        redhat:
+          - conntrack-tools
+          - nginx-all-modules
+        redhat-7:
+          - openssl11-libs
+        suse:
+          - conntrack-tools
+        ubuntu:
+          - conntrack
+    metrics_server:
+      enable: true
+      group: system
+      template_file: addons/metrics_server.yaml
+    modulefiles:
+      etcd:
+        template: templates/etcd.module
+      kube:
+        template: templates/kube.module
+    networks:
+      internal:
+        name: vpc-0-private
+      pod:
+        base: 172.29.0.0
+        bits: 16
+        name: kube-default-pod
+      service:
+        base: 10.150.0.0
+        bits: 16
+        name: kube-default-service
+    node:
+      kubelet_port: 10250
+      options:
+        - '--volume-stats-agg-period=0'
+    nvidia:
+      enable: true
+      env:
+        gpu_accelerator_label:
+          value: brightcomputing.com/gpu-accelerator
+      group: system
+      template_file: addons/nvidia.yaml
+    operators:
+      cm-jupyter-kernel-operator:
+        api_available: false
+        apiresource: cmjupyterkernels.apps.brightcomputing.com
+        install_helm: true
+        install_package: true
+        path: /cm/shared/apps/jupyter-kernel-operator
+        permission_apiresource: CmKubernetesOperatorPermissionsJupyterKernel
+      cm-kubernetes-postgresql-operator:
+        api_available: false
+        apiresource: postgresqls.acid.zalan.do
+        install_helm: false
+        install_package: false
+        path: /cm/shared/apps/kubernetes-postgresql-operator
+        permission_apiresource: CmKubernetesOperatorPermissionsPostgresql
+      cm-kubernetes-spark-operator:
+        api_available: false
+        apiresource: sparkapplications.sparkoperator.k8s.io
+        install_helm: false
+        install_package: false
+        path: /cm/shared/apps/kubernetes-spark-operator
+        permission_apiresource: CmKubernetesOperatorPermissionsSpark
+    permissions_manager:
+      custom_controller_image: ''
+      custom_rbac_proxy_image: ''
+      enable: true
+      registry_address: ''
+    proxy:
+      health_port: 10256
+      options: []
+    psp:
+      enable: true
+      group: system
+      template_file: templates/psp.yaml.jinja2
+    psp_system:
+      enable: true
+      group: system
+      template_file: templates/psp_system.yaml.jinja2
+    registry_mirror: ''
+    roles:
+      containerd:
+        excludes:
+          - /var/lib/containerd
+        kind: generic
+        services:
+          - containerd
+      crio:
+        excludes:
+          - /var/lib/containers
+        kind: generic
+        services:
+          - crio
+    root:
+      enable: true
+      group: system
+      template_file: addons/root.yaml
+    scheduler:
+      options: []
+      port: 10253
+    security:
+      apparmor: false
+      psp: true
+    skip_image_update: false
+    skip_packages: false
+    skip_reboot: false
+    user:
+      role: edit
+    worker:
+      categories:
+        - {{ categories }}
+      configuration_overlay:
+        name: kube-default-worker
+        priority: 500
+      nodes: []
+      packages:
+        - nginx
+      platform_specific_packages:
+        redhat:
+          - conntrack-tools
+          - nginx-all-modules
+        suse:
+          - conntrack-tools
+        ubuntu:
+          - conntrack

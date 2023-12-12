@@ -1,0 +1,21 @@
+    
+- name: Rename node01 to template
+  ansible.builtin.shell: 'cmsh -c "device use {{ ansible_local['custom']['template_node'] }}; set hostname {{ ansible_local['custom']['template_name'] }}; commit"'
+  args:
+    executable: /bin/bash
+  register: rename_template
+  ignore_errors: true
+
+- name: Set IP address of template node
+  ansible.builtin.shell: 'cmsh -c "device use {{ ansible_local['custom']['template_name'] }}; interfaces; use {{ ansible_local['custom']['template_nic'] }}; set ip {{ ansible_local['custom']['template_ip'] }}; commit"'
+  args:
+    executable: /bin/bash
+  register: set_template_ip_output
+  ignore_errors: true 
+  
+- name: Clear MAC address from node {{ ansible_local['custom']['template_name'] }} 
+  ansible.builtin.shell: 'cmsh -c "device use {{ ansible_local['custom']['template_name'] }}; clear mac; commit"'
+  args:
+    executable: /bin/bash
+  register: clear_mac_result
+  ignore_errors: true

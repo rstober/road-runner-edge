@@ -1,0 +1,6 @@
+      
+    - name: Install Jupyter using the bash shell
+      ansible.builtin.shell: cm-jupyter-setup -c {{ ansible_local['custom']['install_dir'] }}/cm-jupyter-setup.conf
+      args:
+        executable: /bin/bash
+        

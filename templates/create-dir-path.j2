@@ -1,0 +1,6 @@
+
+- name: Create a directory {{ dir_path }} on node01
+  ansible.builtin.file:
+    path: {{ dir_path }}
+    state: directory
+    mode: '0755'

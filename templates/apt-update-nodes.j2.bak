@@ -1,0 +1,5 @@
+ 
+- name: Run apt full-upgrade on node {{ node['hostname'] }}
+  ansible.builtin.apt:
+    upgrade: full
+    update_cache: yes

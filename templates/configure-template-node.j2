@@ -1,0 +1,14 @@
+    
+  - name: Rename node01 to template
+    ansible.builtin.shell: 'cmsh -c "device use {{ host_name }}; set hostname template; commit"'
+    args:
+      executable: /bin/bash
+    register: cmsh_output
+    ignore_errors: true
+
+  - name: Set IP address of template node
+    ansible.builtin.shell: 'cmsh -c "device use template; interfaces; use {{ device_name }}; set ip {{ ip_number }}; commit"'
+    args:
+      executable: /bin/bash
+    register: cmsh_output
+    ignore_errors: true 

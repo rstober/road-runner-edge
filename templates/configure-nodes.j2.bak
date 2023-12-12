@@ -1,0 +1,6 @@
+
+  - name: configuring node {{ hostname }}
+    brightcomputing.bcm92.physical_node:
+      hostname: {{ hostname }}
+      category: {{ category }}
+      

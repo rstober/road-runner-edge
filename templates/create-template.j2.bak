@@ -1,0 +1,14 @@
+    
+  - name: Run playbook that appends kernel module {{ module_name }} to {{ image_name }} image
+    ansible.builtin.shell: 'cmsh -c "device use node01; set hostname template; commit"'
+    args:
+      executable: /bin/bash
+    register: cmsh_output
+    ignore_errors: true
+
+  - name: Run playbook that appends kernel module {{ module_name }} to {{ image_name }} image
+    ansible.builtin.shell: 'cmsh -c "device use template; interfaces; use enp0s3; set ip 10.141.255.250; commit"'
+    args:
+      executable: /bin/bash
+    register: cmsh_output
+    ignore_errors: true 

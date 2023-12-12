@@ -1,0 +1,7 @@
+    
+    - name: installing {{ package_name }} into {{ target }} software image
+      dnf:
+        name: '{{ package_name }}'
+        state: present
+        update_cache: yes
+        installroot: {{ target }}

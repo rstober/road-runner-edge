@@ -1,0 +1,6 @@
+                trackers_ScaleKubeNamespaceTracker:
+                  - name: {{ tracker_name }}
+                    controllerNamespace: {{ controllerNamespace }}
+                    assignCategory: {{ assign_category }}
+                    allowedResourceProviders: {{ allowed_resource_providers }}
+                    workloadsPerNode: {{ workloads_per_node | int }}

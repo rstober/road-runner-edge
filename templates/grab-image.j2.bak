@@ -1,0 +1,22 @@
+
+{% for bnode in all_nodes.physical_nodes %}
+
+- name: Print info
+  debug:
+    msg: 
+    - "bnode hostname: {{ bnode.hostname }}"
+    - "node hostname: {{ node.hostname }}"
+    
+{% if bnode.hostname == node.hostname %} 
+- name: Grab image from {{ bnode.hostname }} to {{ bnode.category.softwareImageProxy.parentSoftwareImage.name }}
+  ansible.builtin.shell: 'cmsh -c "device use {{ bnode.hostname }}; grabimage -i {{ bnode.category.softwareImageProxy.parentSoftwareImage.name }} -w --wait"'
+  args:
+    executable: /bin/bash
+  register: grab_image_output
+  until: "'Provisioning completed' in grab_image_output.stdout"
+  failed_when: "'FAILED' in grab_image_output.stdout"
+  retries: 6
+  delay: 10
+  ignore_errors: true
+{% endif %}
+{% endfor %}

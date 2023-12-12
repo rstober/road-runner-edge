@@ -1,0 +1,6 @@
+    
+    - name: install {{ package_name }} on headnode
+      dnf:
+        name: {{ package_name }}
+        state: present
+        update_cache: yes

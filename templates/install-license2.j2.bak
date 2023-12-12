@@ -1,0 +1,8 @@
+  
+  - name: print request-license info
+    debug: 
+      msg: "{{ ansible_local['custom']['license'] | type_debug }}"
+      
+  - name: print request-license info
+    debug: 
+      msg: "{{ ansible_local['custom']['license'] }}"

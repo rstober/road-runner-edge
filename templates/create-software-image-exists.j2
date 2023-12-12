@@ -1,0 +1,17 @@
+        
+  - name: get initial mtime of initrd
+    ansible.builtin.shell: stat -c %Y /cm/images/{{ image_name }}/boot/initrd-{{ kernel_release }}
+    register: initrd_mtime1
+
+  - name: creating the {{ image_name }} software image from the default-image
+    brightcomputing.bcm92.software_image:
+      name: {{ image_name }}
+      cloneFrom: {{ clone_from }}
+      path: {{ image_path }}
+      
+  - name: wait up to 300 seconds for initrd to be re-generated
+    ansible.builtin.shell: stat -c %Y /cm/images/{{ image_name }}/boot/initrd-{{ kernel_release }}
+    register: initrd_mtime2
+    until: initrd_mtime2.stdout > initrd_mtime1.stdout
+    retries: 20
+    delay: 15

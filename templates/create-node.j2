@@ -1,0 +1,6 @@
+  
+  - name: clone node {{ clone_from }} -> {{ node_name }}
+    brightcomputing.bcm92.physical_node:
+      hostname: {{ node_name }}
+      cloneFrom: {{ clone_from }}
+      category: {{ node_category }}

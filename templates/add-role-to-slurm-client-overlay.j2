@@ -1,0 +1,9 @@
+        roles_SlurmClientRole:
+          - name: {{ role_name }}
+            wlmCluster: {{ wlm_cluster }}
+            queues: {{ queues }}
+            socketsPerBoard: {{ sockets_per_board }}
+            coresPerSocket: {{ cores_per_socket | int }}
+            threadsPerCore: {{ threads_per_core | int }}
+            slots: {{ slots | int }}
+            realMemory: {{ real_memory | int }}

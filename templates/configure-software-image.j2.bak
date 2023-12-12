@@ -1,0 +1,7 @@
+        
+  - name: Run playbook that appends kernel module {{ module_name }} to {{ image_name }} image
+    ansible.builtin.shell: 'cmsh -c "softwareimage use {{ image_name }}; kernelmodules; add {{ module_name }}"'
+    args:
+      executable: /bin/bash
+    register: cmsh_output
+    ignore_errors: true

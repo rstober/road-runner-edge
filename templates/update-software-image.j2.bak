@@ -1,0 +1,7 @@
+
+- name: Run apt upgrade on node01
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    upgrade: full
+    update_cache: yes

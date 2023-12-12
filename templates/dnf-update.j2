@@ -1,0 +1,17 @@
+---
+- hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Update head node
+      dnf:
+        name: "*"
+        state: latest
+        update_cache: yes
+        
+    - name: Update default-image
+      dnf:
+        name: "*"
+        installroot: /cm/images/default-image
+        state: latest
+        update_cache: yes

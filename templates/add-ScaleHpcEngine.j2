@@ -1,0 +1,5 @@
+            engines_ScaleHpcEngine:
+              - name: {{ engine_name }}
+                workloadsPerNode: {{ workloads_per_node | int }}
+                priority: {{ priority | int }}
+                wlmCluster: {{ wlm_cluster }}

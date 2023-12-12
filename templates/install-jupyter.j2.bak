@@ -1,0 +1,19 @@
+      
+    - name: Install Jupyter using the bash shell
+      ansible.builtin.shell: cm-jupyter-setup -c {{ ansible_local['custom']['install_dir'] }}/cm-jupyter-setup.conf
+      args:
+        executable: /bin/bash
+        
+    - name: install the AWS CLI
+      ansible.builtin.shell: {{ ansible_local['custom']['install_dir'] }}/aws/install
+      args:
+        executable: /bin/bash
+    
+    - name: Open port 8000 on the (cloud) head node
+      ansible.builtin.shell: aws ec2 authorize-security-group-ingress --group-id {{ vpc.securityGroupDirector }} --protocol tcp --port 8000 --cidr 0.0.0.0/0
+      args:
+        executable: /bin/bash
+      environment:
+        AWS_ACCESS_KEY_ID: {{ aws_provider.accessKeyId }}
+        AWS_SECRET_ACCESS_KEY: {{ aws_provider.accessKeySecret }}
+        AWS_DEFAULT_REGION: {{ aws_provider.defaultRegion.name }}

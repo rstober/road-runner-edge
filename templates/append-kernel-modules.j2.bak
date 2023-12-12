@@ -1,0 +1,63 @@
+{% for image in ansible_local['custom']['software_images'] %}
+{% for im in images_need_modules %}
+{% if image.modules is not none %}
+{% if im.name == image.name %}
+- name: Check if /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log exists
+  ansible.builtin.stat:
+    path: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log
+  register: check_file_name
+    
+- name: Backup /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log to /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log.sav
+  ansible.builtin.copy:
+    src: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log
+    dest: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log.sav
+  when: check_file_name.stat.exists
+  
+- name: Remove old file
+  ansible.builtin.file:
+    path: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log
+    state: absent
+  when: check_file_name.stat.exists
+
+- name: Add kernel modules to {{ image.name }} software image
+  brightcomputing.bcm92.software_image:
+    name: {{ image.name }}
+    modules: {{ im.modules + image.modules }}
+    
+- name: Wait until initrd-{{ image['kernel_release'] }} to be generated
+  ansible.builtin.wait_for:
+    path: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log
+    search_regex: Done
+
+{% elif image.name == image.backup and loop.last %}
+- name: Check if /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log exists
+  ansible.builtin.stat:
+    path: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log
+  register: check_file_name
+    
+- name: Backup /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log to /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log.sav
+  ansible.builtin.copy:
+    src: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log
+    dest: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log.sav
+  when: check_file_name.stat.exists
+  
+- name: Remove old file
+  ansible.builtin.file:
+    path: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log
+    state: absent
+  when: check_file_name.stat.exists
+
+- name: Add kernel modules to {{ image.name }} software image
+  brightcomputing.bcm92.software_image:
+    name: {{ image.name }}
+    modules: {{ images_need_modules[0]['modules'] + image.modules }}
+
+- name: Wait until initrd-{{ image['kernel_release'] }} to be generated
+  ansible.builtin.wait_for:
+    path: /var/spool/cmd/ramdisk/image-{{ image['name'] }}.log
+    search_regex: Done
+
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endfor %}

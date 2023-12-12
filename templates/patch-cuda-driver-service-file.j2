@@ -1,0 +1,6 @@
+
+    - name: add IGNORE_CC_MISMATCH to cuda-driver service file
+      lineinfile:
+        path: "{{ target }}/usr/libexec/cm/cuda-driver"
+        insertafter: '^LOG_FILE='
+        line: export IGNORE_CC_MISMATCH=1

@@ -1,0 +1,50 @@
+        
+  - name: creating the {{ item['name'] }} software image from the {{ item['clone_from'] }} image
+    brightcomputing.bcm92.software_image:
+      name: {{ item['name'] }}
+      cloneFrom: {{ item['clone_from'] }}
+      path: {{ item['path'] }}
+
+  - name: Wait until initrd is generated
+    wait_for:
+      path: /cm/images/{{ item['name'] }}/boot/initrd-{{ item['kernel_release'] }}
+      
+  {% if item['modules'] is not none %}
+- name: list all software images
+  register: result
+  brightcomputing.bcm92.software_image_info: {}
+  
+- name: debug display all software images
+  debug:
+    msg:
+    - 'name: {{item.name}}'
+    - 'id: {{item.id}}'
+    - 'path: {{item.path}}'
+    - 'creation time: {{item.creationTime}}'
+    - 'kernel version: {{item.kernelVersion}}'
+    - 'kernel modules names: {{item.modules|map(attribute=''name'')|join('' '')}}'
+  loop: '{{ result.software_images }}'
+  loop_control:
+    label: '{{ item.name }}'
+    
+- name: set default_image variable
+  set_fact:
+    default_image: '{{result.software_images | selectattr(''name'', ''equalto'', ''default-image'')
+      | first}}'
+      
+- name: debug display default-image software image
+  debug:
+    msg:
+    - 'name: {{default_image.name}}'
+    - 'id: {{default_image.id}}'
+    - 'path: {{default_image.path}}'
+    - 'creation time: {{default_image.creationTime}}'
+    - 'kernel version: {{default_image.kernelVersion}}'
+    - 'kernel modules names: {{default_image.modules|map(attribute=''name'')|join(''
+      '')}}'
+
+- name: creating the {{ item['name'] }} software image from the {{ item['clone_from'] }} image
+    brightcomputing.bcm92.software_image:
+      name: {{ item['name'] }}
+      modules: {{ item['modules'] }}
+  {% endif %}  

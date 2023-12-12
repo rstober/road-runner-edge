@@ -1,0 +1,10 @@
+
+- name: Write playbook that creates {{ network_name }} from {{ clone_from }}
+  brightcomputing.bcm92.network:
+    name: {{ network_name }}
+    domainname: {{ domain_name }}
+    baseaddress: {{ base_address }}
+    broadcastaddress: {{ broadcast_address }}
+    netmaskbits: {{ netmask_bits }}
+    mtu: {{ mtu }}
+    management: {{ management }}

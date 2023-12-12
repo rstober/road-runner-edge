@@ -1,0 +1,26 @@
+        
+- name: clone {{ item['clone_from'] }} category to {{ item['name'] }}
+  brightcomputing.bcm92.category:
+    name: {{ item['name'] }}
+    cloneFrom: {{ item['clone_from'] }}
+        
+- name: set {{ item['name'] }} category software image to {{ item['software_image'] }}
+  brightcomputing.bcm92.category:
+    name: {{ item['name'] }}
+    softwareImageProxy: 
+      parentSoftwareImage: {{ item['software_image'] }} 
+
+- name: Copy disk setup {{ item['disksetup'] }} to /cm/local/apps/cmd/etc/htdocs/{{ item['disksetup'] }}
+  ansible.builtin.copy:
+    src: "{{ item['disksetup'] }}"
+    dest: "/cm/local/apps/cmd/etc/htdocs/{{ item['disksetup'] }}"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Set category {{ item['name'] }} disksetup to /cm/local/apps/cmd/etc/htdocs/{{ item['disksetup'] }}
+  ansible.builtin.shell: 'cmsh -c "category use {{ item['name'] }}; set disksetup /cm/local/apps/cmd/etc/htdocs/{{ item['disksetup'] }}; commit"'
+  args:
+    executable: /bin/bash
+  register: cmsh_output
+  ignore_errors: true
