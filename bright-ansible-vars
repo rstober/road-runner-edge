@@ -1,0 +1,4 @@
+---
+
+ansible_python_interpreter: /cm/local/apps/python3/bin/python
+

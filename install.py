@@ -151,9 +151,7 @@ if __name__ == '__main__':
     shutil.copyfile('hosts', '/etc/ansible/hosts')
     shutil.copyfile('ansible.cfg', '/root/.ansible.cfg')
     
-    printBanner('Preparing playbooks') 
-
-    sys.exit("Testing initial setup")    
+    printBanner('Preparing playbooks')  
         
     if "software_images" in dictionary:
 
@@ -205,7 +203,9 @@ if __name__ == '__main__':
         os.system('ansible-playbook -ilocalhost, -v --extra-vars "index={index}" update-software-image-pb.yaml'.format(index=index))
         
         concatenateFiles(dictionary["install_dir"] + '/roles/apt_upgrade_node/tmp', 'roles/apt_upgrade_node/tasks/main.yaml')
-        cleanTmpDir(dictionary["install_dir"] + '/roles/apt_upgrade_node/tmp')
+        #cleanTmpDir(dictionary["install_dir"] + '/roles/apt_upgrade_node/tmp')
+        
+    sys.exit("Exit after software image")   
         
     if "categories" in dictionary:
     
