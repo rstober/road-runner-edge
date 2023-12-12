@@ -96,18 +96,11 @@ if __name__ == '__main__':
     os.chdir(install_dir)
     
     # install git
-    #os.system("dnf install -y git")
     os.system("apt update")
     os.system("apt install -y git")
     
     # install road-runner distribution
-    os.system("git clone https://github.com/rstober/road-runner-dev.git %s" % install_dir)
-    
-    # download the AWS CLI
-    # os.system("curl \"https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip\" -o \"awscliv2.zip\"")
-    # shutil.unpack_archive('awscliv2.zip', install_dir, 'zip')
-    # os.chmod("aws/install", stat.S_IEXEC)
-    # os.chmod("aws/dist/aws", stat.S_IEXEC)
+    os.system("git clone https://github.com/rstober/road-runner-edge.git %s" % install_dir)
     
     # create the tmp directory
     createDirectoryPath(tmp_dir)
@@ -145,7 +138,7 @@ if __name__ == '__main__':
     os.system('pip install ansible==' + dictionary["ansible_version"])
     
     # install the brightcomputing.bcm92 Ansible collection
-    os.system("ansible-galaxy collection install brightcomputing.bcm92")
+    os.system("ansible-galaxy collection install brightcomputing.bcm100")
    
     # copy the CMSH aliases, bookmarks and scriptlets to their proper locations
     createDirectoryPath('/root/.cm/cmsh')
@@ -158,7 +151,9 @@ if __name__ == '__main__':
     shutil.copyfile('hosts', '/etc/ansible/hosts')
     shutil.copyfile('ansible.cfg', '/root/.ansible.cfg')
     
-    printBanner('Preparing playbooks')   
+    printBanner('Preparing playbooks') 
+
+    sys.exit("Testing initial setup")    
         
     if "software_images" in dictionary:
 
@@ -166,8 +161,6 @@ if __name__ == '__main__':
         
         shutil.copyfile("bright-ansible-vars", install_dir + "/roles/software_images/vars/main.yaml")
         shutil.copyfile("default-ansible-vars", install_dir + "/roles/apt_upgrade_node/vars/main.yaml")
-        
-         sys.exit("Testing ansible vars")
     
         for image in dictionary["software_images"]:
         
