@@ -128,7 +128,7 @@ if __name__ == '__main__':
         json.dump(dictionary, write_file, indent=2)
     
     # create an ansible roles directory for each role
-    roles = list(("networks", "apt_upgrade_node", "software_images", "categories", "kubernetes", "nodes", "packages", "csps", "users", "wlms", "autoscaler", "jupyter", "apps"))
+    roles = list((""software_images", "categories", "users""))
     for role in roles:
         createDirectoryPath('roles/' + role + '/tasks')
         createDirectoryPath('roles/' + role + '/vars')
